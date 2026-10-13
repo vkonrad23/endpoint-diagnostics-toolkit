@@ -2,11 +2,11 @@ import os
 
 os.environ["EDST_DATABASE_URL"] = "sqlite:///./test-edst.db"
 
-import pytest  # noqa: E402
-from fastapi.testclient import TestClient  # noqa: E402
+import pytest
+from fastapi.testclient import TestClient
 
-from app.db.session import Base, engine  # noqa: E402
-from app.main import app  # noqa: E402
+from app.db.session import Base, engine
+from app.main import app
 
 
 @pytest.fixture(autouse=True)

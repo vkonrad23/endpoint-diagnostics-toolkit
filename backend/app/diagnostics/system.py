@@ -2,7 +2,7 @@ import hashlib
 import platform
 import socket
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 import psutil
 
 
@@ -14,16 +14,16 @@ def _metric(name, fn):
             "status": "OK",
             "value": fn(),
             "error": None,
-            "collected_at": datetime.now(timezone.utc).isoformat(),
+            "collected_at": datetime.now(UTC).isoformat(),
             "duration_ms": round((time.perf_counter() - started) * 1000, 2),
         }
-    except Exception as exc:  # noqa: BLE001
+    except Exception as exc:  # noqa: BLE001  # noqa: BLE001
         return {
             "name": name,
             "status": "Unsupported",
             "value": None,
             "error": str(exc)[:200],
-            "collected_at": datetime.now(timezone.utc).isoformat(),
+            "collected_at": datetime.now(UTC).isoformat(),
             "duration_ms": round((time.perf_counter() - started) * 1000, 2),
         }
 
@@ -64,7 +64,7 @@ def collect_system(show_hostname=True):
         "memory_total_bytes": mem.get("total"),
         "memory_available_bytes": mem.get("available"),
         "disks": vals.get("disks"),
-        "collected_at": datetime.now(timezone.utc).isoformat(),
+        "collected_at": datetime.now(UTC).isoformat(),
         "results": metrics,
     }
 
@@ -81,14 +81,14 @@ def demo_system():
         "memory_total_bytes": 17179869184,
         "memory_available_bytes": 9663676416,
         "disks": [{"mountpoint": "/", "total_bytes": 536870912000, "free_bytes": 322122547200}],
-        "collected_at": datetime.now(timezone.utc).isoformat(),
+        "collected_at": datetime.now(UTC).isoformat(),
         "results": [
             {
                 "name": "demo",
                 "status": "OK",
                 "value": "sample",
                 "error": None,
-                "collected_at": datetime.now(timezone.utc).isoformat(),
+                "collected_at": datetime.now(UTC).isoformat(),
                 "duration_ms": 0.1,
             }
         ],
