@@ -17,7 +17,7 @@ def _metric(name, fn):
             "collected_at": datetime.now(timezone.utc).isoformat(),
             "duration_ms": round((time.perf_counter() - started) * 1000, 2),
         }
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001
         return {
             "name": name,
             "status": "Unsupported",
