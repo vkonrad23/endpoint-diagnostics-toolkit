@@ -1,16 +1,29 @@
 import logging
 import uuid
+
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+
 from app.api.v1.routes import router
 from app.core.config import settings
 from app.db.session import Base, engine
 
-logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
+logger = logging.getLogger(__name__)
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s %(levelname)s %(message)s",
+)
+
 Base.metadata.create_all(engine)
-app = FastAPI(title=settings.app_name, version=settings.version)
+
+app = FastAPI(
+    title=settings.app_name,
+    version=settings.version,
+)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://localhost:5173"],
@@ -23,10 +36,14 @@ app.add_middleware(
 async def request_id(request: Request, call_next):
     rid = request.headers.get("x-request-id", str(uuid.uuid4()))
     request.state.request_id = rid
+
     try:
         response = await call_next(request)
     except Exception:
-        logging.exception("Unhandled request failure request_id=%s", rid)
+        logger.exception(
+            "Unhandled request failure request_id=%s",
+            rid,
+        )
         return JSONResponse(
             status_code=500,
             content={
@@ -37,12 +54,13 @@ async def request_id(request: Request, call_next):
                 }
             },
         )
+
     response.headers["x-request-id"] = rid
     return response
 
 
 @app.exception_handler(RequestValidationError)
-async def validation_error(request, exc):
+async def validation_error(request: Request, exc: RequestValidationError):
     return JSONResponse(
         status_code=422,
         content={
@@ -56,7 +74,7 @@ async def validation_error(request, exc):
 
 
 @app.exception_handler(404)
-async def not_found(request, exc):
+async def not_found(request: Request, exc):
     return JSONResponse(
         status_code=404,
         content={
