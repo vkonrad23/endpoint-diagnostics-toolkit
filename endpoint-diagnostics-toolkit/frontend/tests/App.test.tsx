@@ -1,0 +1,2 @@
+import{render,screen}from'@testing-library/react';import{vi,test,expect}from'vitest';import App from'../src/App';
+test('renders accessible navigation and loading-safe shell',()=>{vi.stubGlobal('fetch',vi.fn(()=>Promise.resolve({ok:true,status:200,json:()=>Promise.resolve({items:[]})})));render(<App/>);expect(screen.getByText('Overview')).toBeInTheDocument();expect(screen.getByLabelText('Demo mode')).toBeInTheDocument()})
