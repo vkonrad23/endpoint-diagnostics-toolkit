@@ -1,9 +1,6 @@
 import hashlib
 import platform
 import socket
-import time
-from datetime import UTC, datetime
-import psutil
 
 
 def _metric(name, fn):
